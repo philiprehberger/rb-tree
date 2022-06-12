@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
 
   spec.summary = 'Generic tree data structure with traversal, search, and serialization'
   spec.description = 'A generic tree data structure supporting depth-first and breadth-first traversal, ' \
-                       'node search, path finding, and hash serialization. Each node tracks its parent, ' \
-                       'children, depth, height, and size.'
+                     'node search, path finding, and hash serialization. Each node tracks its parent, ' \
+                     'children, depth, height, and size.'
   spec.homepage = 'https://philiprehberger.com/open-source-packages/ruby/philiprehberger-tree'
   spec.license = 'MIT'
 
