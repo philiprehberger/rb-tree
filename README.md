@@ -42,8 +42,9 @@ child.depth    # => 1
 ### Traversal
 
 ```ruby
-root.each_dfs { |node| puts node.value }   # depth-first pre-order
-root.each_bfs { |node| puts node.value }   # breadth-first
+root.each_dfs { |node| puts node.value }        # depth-first pre-order
+root.each_bfs { |node| puts node.value }        # breadth-first
+root.each_post_order { |node| puts node.value } # depth-first post-order
 ```
 
 ### Search and Path Finding
@@ -64,6 +65,28 @@ puts root.print_tree
 # root
 # └── child
 #     └── grandchild
+```
+
+### Subtree Extraction
+
+```ruby
+copy = child.subtree  # deep copy, detached from parent
+copy.parent           # => nil
+```
+
+### Equality
+
+```ruby
+tree1 = Philiprehberger::Tree::Node.new('a')
+tree2 = Philiprehberger::Tree::Node.new('a')
+tree1 == tree2  # => true (structural equality)
+```
+
+### Ancestors and Siblings
+
+```ruby
+grandchild.ancestors.map(&:value)  # => ['child', 'root']
+child.siblings.map(&:value)        # => ['other_child']
 ```
 
 ### Leaf Collection
@@ -90,9 +113,14 @@ root.leaves.map(&:value)  # => ['grandchild']
 | `#size` | Total nodes in subtree |
 | `#each_dfs` | Depth-first pre-order iteration |
 | `#each_bfs` | Breadth-first iteration |
+| `#each_post_order` | Depth-first post-order iteration |
 | `#find { \|n\| }` | Find first node matching predicate |
 | `#path_to(value)` | Array of nodes from root to target |
 | `#leaves` | All leaf nodes in subtree |
+| `#subtree` | Deep copy of node and descendants |
+| `#==` | Structural equality comparison |
+| `#ancestors` | Array of ancestors from parent to root |
+| `#siblings` | Sibling nodes excluding self |
 | `#to_h` | Serialize subtree to hash |
 | `#print_tree` | Visual string representation |
 

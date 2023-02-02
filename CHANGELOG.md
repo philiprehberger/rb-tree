@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-03
+
+### Added
+- Post-order depth-first traversal via `each_post_order`
+- Deep subtree extraction via `subtree`
+- Structural equality via `==`
+- `ancestors` method returning path from parent to root
+- `siblings` method returning sibling nodes
+
 ## [0.1.5] - 2026-03-31
 
 ### Added
