@@ -55,6 +55,36 @@ path = root.path_to('grandchild')
 path.map(&:value)  # => ['root', 'child', 'grandchild']
 ```
 
+### Deserialization
+
+```ruby
+hash = { value: 'root', children: [{ value: 'child', children: [] }] }
+tree = Philiprehberger::Tree::Node.from_h(hash)
+tree.value  # => 'root'
+```
+
+### Map (Transform Values)
+
+```ruby
+mapped = root.map { |v| v.upcase }
+mapped.value                     # => 'ROOT'
+mapped.children.map(&:value)     # => ['CHILD']
+```
+
+### Flatten
+
+```ruby
+root.flatten  # => ['root', 'child', 'grandchild'] (DFS pre-order)
+```
+
+### Iterate with Depth
+
+```ruby
+root.each_with_depth do |node, depth|
+  puts "#{'  ' * depth}#{node.value}"
+end
+```
+
 ### Serialization
 
 ```ruby
@@ -102,6 +132,7 @@ root.leaves.map(&:value)  # => ['grandchild']
 | Method | Description |
 |--------|-------------|
 | `.new(value)` | Create a new tree node |
+| `.from_h(hash)` | Reconstruct a tree from a hash (inverse of `#to_h`) |
 | `#add_child(value)` | Add a child node and return it |
 | `#remove_child(value)` | Remove a child by value |
 | `#children` | Array of child nodes |
@@ -121,6 +152,9 @@ root.leaves.map(&:value)  # => ['grandchild']
 | `#==` | Structural equality comparison |
 | `#ancestors` | Array of ancestors from parent to root |
 | `#siblings` | Sibling nodes excluding self |
+| `#map { \|value\| }` | New tree with transformed values |
+| `#flatten` | All values as flat array (DFS pre-order) |
+| `#each_with_depth` | Iterate yielding node and depth level |
 | `#to_h` | Serialize subtree to hash |
 | `#print_tree` | Visual string representation |
 

@@ -297,6 +297,108 @@ RSpec.describe Philiprehberger::Tree::Node do
     end
   end
 
+  describe '.from_h' do
+    it 'reconstructs a tree from a hash' do
+      hash = { value: 'root', children: [
+        { value: 'a', children: [{ value: 'a1', children: [] }] },
+        { value: 'b', children: [] }
+      ] }
+
+      tree = described_class.from_h(hash)
+      expect(tree.value).to eq('root')
+      expect(tree.children.map(&:value)).to eq(%w[a b])
+      expect(tree.children[0].children[0].value).to eq('a1')
+    end
+
+    it 'sets parent references correctly' do
+      hash = { value: 'root', children: [{ value: 'child', children: [] }] }
+      tree = described_class.from_h(hash)
+      expect(tree.children[0].parent).to eq(tree)
+    end
+
+    it 'round-trips through to_h' do
+      child = root.add_child('a')
+      child.add_child('a1')
+      root.add_child('b')
+
+      rebuilt = described_class.from_h(root.to_h)
+      expect(rebuilt).to eq(root)
+    end
+
+    it 'handles a single node' do
+      tree = described_class.from_h({ value: 'solo', children: [] })
+      expect(tree.value).to eq('solo')
+      expect(tree.children).to be_empty
+      expect(tree.parent).to be_nil
+    end
+  end
+
+  describe '#map' do
+    it 'transforms values while preserving structure' do
+      root.add_child('a')
+      root.add_child('b')
+
+      mapped = root.map(&:upcase)
+      expect(mapped.value).to eq('ROOT')
+      expect(mapped.children.map(&:value)).to eq(%w[A B])
+    end
+
+    it 'sets parent references on the new tree' do
+      child = root.add_child('a')
+      child.add_child('a1')
+
+      mapped = root.map(&:upcase)
+      expect(mapped.children[0].parent).to eq(mapped)
+      expect(mapped.children[0].children[0].parent.value).to eq('A')
+    end
+
+    it 'does not modify the original tree' do
+      root.add_child('a')
+      root.map(&:upcase)
+      expect(root.value).to eq('root')
+    end
+
+    it 'works on a single node' do
+      mapped = root.map(&:length)
+      expect(mapped.value).to eq(4)
+      expect(mapped.children).to be_empty
+    end
+  end
+
+  describe '#flatten' do
+    it 'returns all values in DFS pre-order' do
+      a = root.add_child('a')
+      a.add_child('a1')
+      root.add_child('b')
+
+      expect(root.flatten).to eq(%w[root a a1 b])
+    end
+
+    it 'returns single-element array for leaf node' do
+      expect(root.flatten).to eq(['root'])
+    end
+  end
+
+  describe '#each_with_depth' do
+    it 'yields node and depth pairs' do
+      a = root.add_child('a')
+      a.add_child('a1')
+      root.add_child('b')
+
+      pairs = root.each_with_depth.map { |node, depth| [node.value, depth] }
+      expect(pairs).to eq([['root', 0], ['a', 1], ['a1', 2], ['b', 1]])
+    end
+
+    it 'returns an enumerator when no block given' do
+      expect(root.each_with_depth).to be_an(Enumerator)
+    end
+
+    it 'yields depth 0 for a single root' do
+      pairs = root.each_with_depth.map { |_node, depth| depth }
+      expect(pairs).to eq([0])
+    end
+  end
+
   describe '#find' do
     it 'finds a node by predicate' do
       root.add_child('target')
