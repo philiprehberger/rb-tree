@@ -55,6 +55,22 @@ path = root.path_to('grandchild')
 path.map(&:value)  # => ['root', 'child', 'grandchild']
 ```
 
+### Value Lookup
+
+```ruby
+root.find_by_value('grandchild')   # => #<Node value="grandchild">
+root.find_by_value('missing')      # => nil
+root.include?('grandchild')        # => true
+root.include?('missing')           # => false
+```
+
+### Select Matching Nodes
+
+```ruby
+matches = root.select { |n| n.value.to_s.start_with?('g') }
+matches.map(&:value)  # => ['grandchild'] (DFS pre-order)
+```
+
 ### Deserialization
 
 ```ruby
@@ -146,6 +162,9 @@ root.leaves.map(&:value)  # => ['grandchild']
 | `#each_bfs` | Breadth-first iteration |
 | `#each_post_order` | Depth-first post-order iteration |
 | `#find { \|n\| }` | Find first node matching predicate |
+| `#find_by_value(value)` | Find first node whose value equals `value` |
+| `#include?(value)` | True if any node has the given value |
+| `#select { \|n\| }` | All nodes matching predicate (DFS pre-order) |
 | `#path_to(value)` | Array of nodes from root to target |
 | `#leaves` | All leaf nodes in subtree |
 | `#subtree` | Deep copy of node and descendants |

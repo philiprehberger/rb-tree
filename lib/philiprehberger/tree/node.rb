@@ -186,6 +186,32 @@ module Philiprehberger
         nil
       end
 
+      # Find the first node whose value matches the given value (==).
+      #
+      # @param value [Object] value to search for
+      # @return [Node, nil] the first matching node, or nil
+      def find_by_value(value)
+        find { |n| n.value == value }
+      end
+
+      # Check whether any node in the subtree has the given value.
+      #
+      # @param value [Object] value to search for
+      # @return [Boolean]
+      def include?(value)
+        !find_by_value(value).nil?
+      end
+
+      # Return all nodes in the subtree matching the predicate block.
+      #
+      # @yield [Node] predicate block
+      # @return [Array<Node>] all matching nodes (empty if none or no block)
+      def select(&block)
+        return [] unless block
+
+        each_dfs.select(&block)
+      end
+
       # Return the path from root to the first node with the given value.
       #
       # @param value [Object] value to search for
