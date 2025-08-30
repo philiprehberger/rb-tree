@@ -46,6 +46,29 @@ module Philiprehberger
         child
       end
 
+      # Remove all descendants deeper than `max_depth` levels below the receiver.
+      #
+      # `prune(max_depth: 0)` removes every child, `prune(max_depth: 1)` keeps
+      # immediate children but removes grandchildren, and so on. Mutates in
+      # place; the receiver's own value is never touched.
+      #
+      # @param max_depth [Integer] non-negative retention depth
+      # @return [self] for chaining
+      # @raise [ArgumentError] if max_depth is not a non-negative Integer
+      def prune(max_depth:)
+        unless max_depth.is_a?(Integer) && max_depth >= 0
+          raise ArgumentError, "max_depth must be a non-negative Integer (got #{max_depth.inspect})"
+        end
+
+        if max_depth.zero?
+          @children.each { |c| c.instance_variable_set(:@parent, nil) }
+          @children.clear
+        else
+          @children.each { |child| child.prune(max_depth: max_depth - 1) }
+        end
+        self
+      end
+
       # Check if this node is the root (has no parent).
       #
       # @return [Boolean]

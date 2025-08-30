@@ -141,6 +141,20 @@ child.siblings.map(&:value)        # => ['other_child']
 root.leaves.map(&:value)  # => ['grandchild']
 ```
 
+### Pruning Deep Subtrees
+
+```ruby
+# max_depth: 0 drops every child
+root.prune(max_depth: 0)
+root.children  # => []
+
+# max_depth: 1 keeps immediate children, drops grandchildren
+root.prune(max_depth: 1)
+
+# Returns self for chaining
+root.prune(max_depth: 2).flatten
+```
+
 ## API
 
 ### `Node`
@@ -151,6 +165,7 @@ root.leaves.map(&:value)  # => ['grandchild']
 | `.from_h(hash)` | Reconstruct a tree from a hash (inverse of `#to_h`) |
 | `#add_child(value)` | Add a child node and return it |
 | `#remove_child(value)` | Remove a child by value |
+| `#prune(max_depth:)` | Remove descendants deeper than `max_depth` below receiver (returns `self`) |
 | `#children` | Array of child nodes |
 | `#parent` | Parent node or nil |
 | `#root?` | True if node has no parent |

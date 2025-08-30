@@ -582,4 +582,67 @@ RSpec.describe Philiprehberger::Tree::Node do
       expect(output).to include('b')
     end
   end
+
+  describe '#prune' do
+    let(:deep_tree) do
+      tree = described_class.new('root')
+      a = tree.add_child('a')
+      a1 = a.add_child('a1')
+      a1.add_child('a1a')
+      tree.add_child('b')
+      tree
+    end
+
+    it 'removes all children when max_depth is 0' do
+      result = deep_tree.prune(max_depth: 0)
+      expect(result).to equal(deep_tree)
+      expect(deep_tree.children).to be_empty
+      expect(deep_tree.value).to eq('root')
+    end
+
+    it 'keeps immediate children but removes grandchildren when max_depth is 1' do
+      deep_tree.prune(max_depth: 1)
+      expect(deep_tree.children.map(&:value)).to eq(%w[a b])
+      a = deep_tree.children.first
+      expect(a.children).to be_empty
+    end
+
+    it 'keeps grandchildren but removes great-grandchildren when max_depth is 2' do
+      deep_tree.prune(max_depth: 2)
+      expect(deep_tree.flatten).to eq(%w[root a a1 b])
+      a1 = deep_tree.children.first.children.first
+      expect(a1.children).to be_empty
+    end
+
+    it 'is a no-op when max_depth exceeds the existing height' do
+      before = deep_tree.to_h
+      deep_tree.prune(max_depth: 99)
+      expect(deep_tree.to_h).to eq(before)
+    end
+
+    it 'detaches pruned children from their former parent' do
+      child = deep_tree.children.first
+      deep_tree.prune(max_depth: 0)
+      expect(child.parent).to be_nil
+    end
+
+    it 'does not modify the receiver value' do
+      deep_tree.prune(max_depth: 0)
+      expect(deep_tree.value).to eq('root')
+    end
+
+    it 'returns self for chaining' do
+      expect(deep_tree.prune(max_depth: 1)).to equal(deep_tree)
+    end
+
+    it 'raises ArgumentError for negative max_depth' do
+      expect { deep_tree.prune(max_depth: -1) }.to raise_error(ArgumentError, /non-negative Integer/)
+    end
+
+    it 'raises ArgumentError for non-integer max_depth' do
+      expect { deep_tree.prune(max_depth: 1.5) }.to raise_error(ArgumentError, /non-negative Integer/)
+      expect { deep_tree.prune(max_depth: '1') }.to raise_error(ArgumentError, /non-negative Integer/)
+      expect { deep_tree.prune(max_depth: nil) }.to raise_error(ArgumentError, /non-negative Integer/)
+    end
+  end
 end
