@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/rb-tree/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/rb-tree/actions/workflows/ci.yml)
 [![Gem Version](https://badge.fury.io/rb/philiprehberger-tree.svg)](https://rubygems.org/gems/philiprehberger-tree)
 [![License](https://img.shields.io/github/license/philiprehberger/rb-tree)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Generic tree data structure with traversal, search, and serialization
 
@@ -106,4 +107,4 @@ bundle exec rubocop
 
 ## License
 
-MIT
+[MIT](LICENSE)
