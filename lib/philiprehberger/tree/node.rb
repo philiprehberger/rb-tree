@@ -167,10 +167,18 @@ module Philiprehberger
       # @return [String] the tree as a formatted string
       def print_tree(indent: '', last: true)
         lines = []
-        connector = root? ? '' : (last ? '└── ' : '├── ')
+        connector = if root?
+                      ''
+                    else
+                      (last ? '└── ' : '├── ')
+                    end
         lines << "#{indent}#{connector}#{@value}"
 
-        child_indent = indent + (root? ? '' : (last ? '    ' : '│   '))
+        child_indent = indent + (if root?
+                                   ''
+                                 else
+                                   (last ? '    ' : '│   ')
+                                 end)
         @children.each_with_index do |child, i|
           lines << child.print_tree(indent: child_indent, last: i == @children.size - 1)
         end
