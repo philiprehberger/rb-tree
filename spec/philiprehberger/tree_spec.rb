@@ -159,6 +159,144 @@ RSpec.describe Philiprehberger::Tree::Node do
     end
   end
 
+  describe '#each_post_order' do
+    it 'iterates in depth-first post-order (children before parent)' do
+      a = root.add_child('a')
+      a.add_child('a1')
+      a.add_child('a2')
+      root.add_child('b')
+
+      values = root.each_post_order.map(&:value)
+      expect(values).to eq(%w[a1 a2 a b root])
+    end
+
+    it 'returns an enumerator when no block given' do
+      expect(root.each_post_order).to be_an(Enumerator)
+    end
+
+    it 'yields single node for root-only tree' do
+      values = root.each_post_order.map(&:value)
+      expect(values).to eq(['root'])
+    end
+  end
+
+  describe '#subtree' do
+    it 'returns a deep copy detached from parent' do
+      child = root.add_child('child')
+      child.add_child('grandchild')
+
+      copy = child.subtree
+      expect(copy.value).to eq('child')
+      expect(copy.parent).to be_nil
+      expect(copy.children.map(&:value)).to eq(['grandchild'])
+    end
+
+    it 'does not affect original when copy is modified' do
+      child = root.add_child('child')
+      grandchild = child.add_child('grandchild')
+
+      copy = child.subtree
+      copy.add_child('new_node')
+
+      expect(child.children.map(&:value)).to eq(['grandchild'])
+      expect(grandchild.children).to be_empty
+    end
+
+    it 'works for a single node' do
+      copy = root.subtree
+      expect(copy.value).to eq('root')
+      expect(copy.children).to be_empty
+      expect(copy.parent).to be_nil
+    end
+  end
+
+  describe '#==' do
+    it 'returns true for structurally identical trees' do
+      tree1 = described_class.new('root')
+      tree1.add_child('a')
+      tree1.add_child('b')
+
+      tree2 = described_class.new('root')
+      tree2.add_child('a')
+      tree2.add_child('b')
+
+      expect(tree1).to eq(tree2)
+    end
+
+    it 'returns false for different values' do
+      tree1 = described_class.new('root')
+      tree2 = described_class.new('other')
+
+      expect(tree1).not_to eq(tree2)
+    end
+
+    it 'returns false for different shapes' do
+      tree1 = described_class.new('root')
+      tree1.add_child('a')
+
+      tree2 = described_class.new('root')
+      tree2.add_child('a')
+      tree2.add_child('b')
+
+      expect(tree1).not_to eq(tree2)
+    end
+
+    it 'returns false for non-Node objects' do
+      expect(root).not_to eq('root')
+    end
+
+    it 'checks children recursively' do
+      tree1 = described_class.new('root')
+      a1 = tree1.add_child('a')
+      a1.add_child('deep')
+
+      tree2 = described_class.new('root')
+      a2 = tree2.add_child('a')
+      a2.add_child('different')
+
+      expect(tree1).not_to eq(tree2)
+    end
+  end
+
+  describe '#ancestors' do
+    it 'returns ancestors from parent to root' do
+      child = root.add_child('child')
+      grandchild = child.add_child('grandchild')
+
+      ancestor_values = grandchild.ancestors.map(&:value)
+      expect(ancestor_values).to eq(%w[child root])
+    end
+
+    it 'returns empty array for root node' do
+      expect(root.ancestors).to be_empty
+    end
+
+    it 'returns only parent for direct child' do
+      child = root.add_child('child')
+      expect(child.ancestors.map(&:value)).to eq(['root'])
+    end
+  end
+
+  describe '#siblings' do
+    it 'returns sibling nodes excluding self' do
+      a = root.add_child('a')
+      root.add_child('b')
+      root.add_child('c')
+
+      sibling_values = a.siblings.map(&:value)
+      expect(sibling_values).to eq(%w[b c])
+    end
+
+    it 'returns empty array for root node' do
+      expect(root.siblings).to be_empty
+    end
+
+    it 'returns empty array for only child' do
+      child = root.add_child('only')
+      expect(child.siblings).to be_empty
+    end
+  end
+
   describe '#find' do
     it 'finds a node by predicate' do
       root.add_child('target')

@@ -115,6 +115,66 @@ module Philiprehberger
         end
       end
 
+      # Iterate depth-first (post-order) over the subtree.
+      # Children are visited before the parent.
+      #
+      # @yield [Node] each node in depth-first post-order
+      # @return [Enumerator] if no block given
+      def each_post_order(&block)
+        return enum_for(:each_post_order) unless block
+
+        @children.each { |child| child.each_post_order(&block) }
+        block.call(self)
+      end
+
+      # Return a deep copy of this node and all descendants, detached from parent.
+      #
+      # @return [Node] a new tree rooted at a copy of this node
+      def subtree
+        copy = Node.new(@value)
+        @children.each do |child|
+          child_copy = child.subtree
+          child_copy.instance_variable_set(:@parent, copy)
+          copy.children << child_copy
+        end
+        copy
+      end
+
+      # Structural equality: same value, same number of children,
+      # and children are recursively equal.
+      #
+      # @param other [Node] the node to compare with
+      # @return [Boolean]
+      def ==(other)
+        return false unless other.is_a?(Node)
+        return false unless @value == other.value
+        return false unless @children.size == other.children.size
+
+        @children.zip(other.children).all? { |a, b| a == b }
+      end
+
+      # Return an array of ancestor nodes from parent up to root.
+      #
+      # @return [Array<Node>] ancestors from parent to root (empty for root)
+      def ancestors
+        result = []
+        node = @parent
+        while node
+          result << node
+          node = node.parent
+        end
+        result
+      end
+
+      # Return sibling nodes (children of the same parent, excluding self).
+      #
+      # @return [Array<Node>] sibling nodes (empty for root)
+      def siblings
+        return [] unless @parent
+
+        @parent.children.reject { |c| c.equal?(self) }
+      end
+
       # Find the first node matching the block.
       #
       # @yield [Node] predicate block
