@@ -220,6 +220,52 @@ module Philiprehberger
         }
       end
 
+      # Reconstruct a tree from a hash (inverse of #to_h).
+      #
+      # @param hash [Hash] hash with :value and :children keys
+      # @return [Node] the reconstructed tree
+      def self.from_h(hash)
+        node = new(hash[:value])
+        (hash[:children] || []).each do |child_hash|
+          child = from_h(child_hash)
+          child.instance_variable_set(:@parent, node)
+          node.children << child
+        end
+        node
+      end
+
+      # Return a new tree with the same structure but transformed values.
+      #
+      # @yield [Object] the value of each node
+      # @return [Node] a new tree with mapped values
+      def map(&block)
+        mapped = Node.new(block.call(@value))
+        @children.each do |child|
+          child_mapped = child.map(&block)
+          child_mapped.instance_variable_set(:@parent, mapped)
+          mapped.children << child_mapped
+        end
+        mapped
+      end
+
+      # Return all values as a flat array in depth-first pre-order.
+      #
+      # @return [Array] all node values
+      def flatten
+        each_dfs.map(&:value)
+      end
+
+      # Iterate depth-first yielding each node with its depth level.
+      #
+      # @yield [Node, Integer] each node and its depth
+      # @return [Enumerator] if no block given
+      def each_with_depth(current_depth = 0, &block)
+        return enum_for(:each_with_depth, current_depth) unless block
+
+        block.call(self, current_depth)
+        @children.each { |child| child.each_with_depth(current_depth + 1, &block) }
+      end
+
       # Print a visual representation of the tree.
       #
       # @param indent [String] prefix for indentation (used internally)

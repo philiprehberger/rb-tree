@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-09
+
+### Added
+- `Node.from_h(hash)` to reconstruct a tree from a hash (inverse of `to_h`)
+- `Node#map` to create a new tree with transformed values
+- `Node#flatten` to collect all values as a flat array
+- `Node#each_with_depth` to iterate yielding node and depth level
+
 ## [0.2.0] - 2026-04-03
 
 ### Added
