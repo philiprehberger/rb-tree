@@ -1,11 +1,18 @@
 # Changelog
 
-All notable changes to this gem will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.4.0] - 2026-04-15
+
+### Added
+- `Node#find_by_value(value)` returns the first node whose value equals the given value (DFS pre-order)
+- `Node#include?(value)` returns true when any node in the subtree has the given value
+- `Node#select { |node| }` returns all nodes in the subtree matching the predicate block
 
 ## [0.3.0] - 2026-04-09
 
@@ -63,3 +70,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hash serialization via `to_h`
 - Visual tree printing via `print_tree`
 - Add and remove child operations
+
+[0.4.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.4.0
+[0.3.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.3.0
+[0.2.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.2.0
+[0.1.5]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.5
+[0.1.4]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.4
+[0.1.3]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.3
+[0.1.2]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.2
+[0.1.1]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.1
+[0.1.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.1.0

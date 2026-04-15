@@ -418,6 +418,103 @@ RSpec.describe Philiprehberger::Tree::Node do
     end
   end
 
+  describe '#find_by_value' do
+    it 'returns the first node with the given value' do
+      root.add_child('target')
+      node = root.find_by_value('target')
+      expect(node.value).to eq('target')
+    end
+
+    it 'finds nested values' do
+      child = root.add_child('a')
+      child.add_child('deep')
+      expect(root.find_by_value('deep').value).to eq('deep')
+    end
+
+    it 'returns nil when value is not present' do
+      expect(root.find_by_value('missing')).to be_nil
+    end
+
+    it 'returns self when value matches root' do
+      expect(root.find_by_value('root')).to eq(root)
+    end
+
+    it 'returns the first match in DFS pre-order when duplicates exist' do
+      a = root.add_child('a')
+      a.add_child('dup')
+      b = root.add_child('b')
+      b_dup = b.add_child('dup')
+
+      found = root.find_by_value('dup')
+      expect(found).not_to equal(b_dup)
+      expect(found.parent.value).to eq('a')
+    end
+  end
+
+  describe '#include?' do
+    it 'returns true when a node with the value exists' do
+      root.add_child('a')
+      expect(root.include?('a')).to be(true)
+    end
+
+    it 'returns true for deeply nested values' do
+      child = root.add_child('a')
+      child.add_child('deep')
+      expect(root.include?('deep')).to be(true)
+    end
+
+    it 'returns false when no node has the value' do
+      expect(root.include?('missing')).to be(false)
+    end
+
+    it 'returns true for the root value' do
+      expect(root.include?('root')).to be(true)
+    end
+
+    it 'returns false for nil when no nil values exist' do
+      root.add_child('a')
+      expect(root.include?(nil)).to be(false)
+    end
+  end
+
+  describe '#select' do
+    it 'returns all nodes matching the predicate' do
+      root.add_child('a')
+      root.add_child('b')
+      root.add_child('a')
+
+      matches = root.select { |n| n.value == 'a' }
+      expect(matches.map(&:value)).to eq(%w[a a])
+    end
+
+    it 'returns matching nodes in DFS pre-order' do
+      a = root.add_child('a')
+      a.add_child('x')
+      b = root.add_child('b')
+      b.add_child('x')
+
+      xs = root.select { |n| n.value == 'x' }
+      expect(xs.map { |n| n.parent.value }).to eq(%w[a b])
+    end
+
+    it 'returns an empty array when nothing matches' do
+      root.add_child('a')
+      expect(root.select { |n| n.value == 'missing' }).to eq([])
+    end
+
+    it 'returns an empty array when no block is given' do
+      root.add_child('a')
+      expect(root.select).to eq([])
+    end
+
+    it 'can match by arbitrary predicate, including self' do
+      root.add_child('short')
+      root.add_child('longer_value')
+      matches = root.select { |n| n.value.to_s.length > 4 }
+      expect(matches.map(&:value)).to contain_exactly('short', 'longer_value')
+    end
+  end
+
   describe '#path_to' do
     it 'returns the path from root to a node' do
       child = root.add_child('a')
