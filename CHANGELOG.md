@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-16
+
+### Added
+- `Node#prune(max_depth:)` removes all descendants deeper than `max_depth` levels below the receiver (mutates in place, returns `self`)
+- `max_depth: 0` removes all children; higher values keep that many levels and remove deeper descendants
+- Raises `ArgumentError` when `max_depth` is not a non-negative Integer
+
 ## [0.4.0] - 2026-04-15
 
 ### Added
@@ -71,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Visual tree printing via `print_tree`
 - Add and remove child operations
 
+[0.5.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.5.0
 [0.4.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.4.0
 [0.3.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.3.0
 [0.2.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.2.0
