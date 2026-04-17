@@ -259,6 +259,23 @@ module Philiprehberger
         each_dfs.select(&:leaf?)
       end
 
+      # Return every path from the receiver to each leaf in its subtree.
+      #
+      # Each element is an array of nodes starting at the receiver and ending
+      # at a leaf, in depth-first pre-order by leaf. A leaf receiver returns
+      # `[[self]]`.
+      #
+      # @return [Array<Array<Node>>] paths, each as an array of nodes
+      def paths
+        return [[self]] if leaf?
+
+        result = []
+        @children.each do |child|
+          child.paths.each { |sub_path| result << ([self] + sub_path) }
+        end
+        result
+      end
+
       # Serialize the subtree to a hash.
       #
       # @return [Hash] hash with :value and :children keys
