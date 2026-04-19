@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-17
+
+### Added
+- `Node#paths` returns all root-to-leaf paths in the subtree as arrays of nodes (DFS pre-order); a leaf receiver returns `[[self]]`
+
 ## [0.5.0] - 2026-04-16
 
 ### Added
@@ -78,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Visual tree printing via `print_tree`
 - Add and remove child operations
 
+[0.6.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.6.0
 [0.5.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.5.0
 [0.4.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.4.0
 [0.3.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.3.0

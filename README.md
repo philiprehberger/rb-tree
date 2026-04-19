@@ -141,6 +141,13 @@ child.siblings.map(&:value)        # => ['other_child']
 root.leaves.map(&:value)  # => ['grandchild']
 ```
 
+### All Root-to-Leaf Paths
+
+```ruby
+root.paths.map { |path| path.map(&:value) }
+# => [['root', 'child', 'grandchild']]
+```
+
 ### Pruning Deep Subtrees
 
 ```ruby
@@ -182,6 +189,7 @@ root.prune(max_depth: 2).flatten
 | `#select { \|n\| }` | All nodes matching predicate (DFS pre-order) |
 | `#path_to(value)` | Array of nodes from root to target |
 | `#leaves` | All leaf nodes in subtree |
+| `#paths` | All root-to-leaf paths as arrays of nodes (DFS pre-order) |
 | `#subtree` | Deep copy of node and descendants |
 | `#==` | Structural equality comparison |
 | `#ancestors` | Array of ancestors from parent to root |

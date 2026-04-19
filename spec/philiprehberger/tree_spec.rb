@@ -551,6 +551,64 @@ RSpec.describe Philiprehberger::Tree::Node do
     end
   end
 
+  describe '#paths' do
+    it 'returns [[self]] for a single-node tree' do
+      expect(root.paths).to eq([[root]])
+    end
+
+    it 'returns one path per leaf in DFS pre-order' do
+      a = root.add_child('a')
+      a.add_child('a1')
+      a.add_child('a2')
+      root.add_child('b')
+
+      value_paths = root.paths.map { |path| path.map(&:value) }
+      expect(value_paths).to eq([
+                                  %w[root a a1],
+                                  %w[root a a2],
+                                  %w[root b]
+                                ])
+    end
+
+    it 'returns a single path for a linear chain' do
+      a = root.add_child('a')
+      a.add_child('b')
+
+      value_paths = root.paths.map { |path| path.map(&:value) }
+      expect(value_paths).to eq([%w[root a b]])
+    end
+
+    it 'starts paths at the receiver, not the true root' do
+      a = root.add_child('a')
+      a.add_child('a1')
+      a.add_child('a2')
+
+      value_paths = a.paths.map { |path| path.map(&:value) }
+      expect(value_paths).to eq([%w[a a1], %w[a a2]])
+    end
+
+    it 'produces a separate path for each leaf when values are duplicated' do
+      a = root.add_child('a')
+      a.add_child('dup')
+      b = root.add_child('b')
+      b.add_child('dup')
+
+      expect(root.paths.size).to eq(2)
+      expect(root.paths.map { |p| p.map(&:value) }).to eq([
+                                                            %w[root a dup],
+                                                            %w[root b dup]
+                                                          ])
+    end
+
+    it 'returns arrays of actual Node references, not values' do
+      a = root.add_child('a')
+      first_path = root.paths.first
+      expect(first_path).to all(be_a(described_class))
+      expect(first_path.last).to equal(a)
+      expect(first_path.first).to equal(root)
+    end
+  end
+
   describe '#to_h' do
     it 'serializes the tree to a hash' do
       child = root.add_child('a')
