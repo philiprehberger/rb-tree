@@ -297,6 +297,78 @@ RSpec.describe Philiprehberger::Tree::Node do
     end
   end
 
+  describe '#next_sibling' do
+    it 'returns nil for a single root with no parent' do
+      expect(root.next_sibling).to be_nil
+    end
+
+    it 'returns the next sibling when one exists on each side' do
+      root.add_child('a')
+      b = root.add_child('b')
+      root.add_child('c')
+
+      expect(b.next_sibling.value).to eq('c')
+    end
+
+    it 'returns the next sibling for the first child' do
+      a = root.add_child('a')
+      root.add_child('b')
+
+      expect(a.next_sibling.value).to eq('b')
+    end
+
+    it 'returns nil for the last child' do
+      root.add_child('a')
+      b = root.add_child('b')
+
+      expect(b.next_sibling).to be_nil
+    end
+
+    it 'returns the next sibling for a deeply nested node' do
+      child = root.add_child('child')
+      grandchild_a = child.add_child('a')
+      child.add_child('b')
+
+      expect(grandchild_a.next_sibling.value).to eq('b')
+    end
+  end
+
+  describe '#prev_sibling' do
+    it 'returns nil for a single root with no parent' do
+      expect(root.prev_sibling).to be_nil
+    end
+
+    it 'returns the previous sibling when one exists on each side' do
+      root.add_child('a')
+      b = root.add_child('b')
+      root.add_child('c')
+
+      expect(b.prev_sibling.value).to eq('a')
+    end
+
+    it 'returns nil for the first child' do
+      a = root.add_child('a')
+      root.add_child('b')
+
+      expect(a.prev_sibling).to be_nil
+    end
+
+    it 'returns the previous sibling for the last child' do
+      root.add_child('a')
+      b = root.add_child('b')
+
+      expect(b.prev_sibling.value).to eq('a')
+    end
+
+    it 'returns the previous sibling for a deeply nested node' do
+      child = root.add_child('child')
+      child.add_child('a')
+      grandchild_b = child.add_child('b')
+
+      expect(grandchild_b.prev_sibling.value).to eq('a')
+    end
+  end
+
   describe '.from_h' do
     it 'reconstructs a tree from a hash' do
       hash = { value: 'root', children: [

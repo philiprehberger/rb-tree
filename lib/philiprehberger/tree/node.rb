@@ -198,6 +198,30 @@ module Philiprehberger
         @parent.children.reject { |c| c.equal?(self) }
       end
 
+      # Return the next sibling in the parent's child order.
+      #
+      # @return [Node, nil] the next sibling, or nil if this is the last child or has no parent
+      def next_sibling
+        return nil unless @parent
+
+        index = @parent.children.index { |c| c.equal?(self) }
+        return nil unless index
+
+        @parent.children[index + 1]
+      end
+
+      # Return the previous sibling in the parent's child order.
+      #
+      # @return [Node, nil] the previous sibling, or nil if this is the first child or has no parent
+      def prev_sibling
+        return nil unless @parent
+
+        index = @parent.children.index { |c| c.equal?(self) }
+        return nil if index.nil? || index.zero?
+
+        @parent.children[index - 1]
+      end
+
       # Find the first node matching the block.
       #
       # @yield [Node] predicate block

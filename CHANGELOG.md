@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-26
+
+### Added
+- `Node#siblings` returns sibling nodes (children of the same parent, excluding self); empty array for root
+- `Node#next_sibling` returns the next sibling in the parent's child order, or nil if last child or no parent
+- `Node#prev_sibling` returns the previous sibling in the parent's child order, or nil if first child or no parent
+
 ## [0.6.0] - 2026-04-17
 
 ### Added
@@ -83,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Visual tree printing via `print_tree`
 - Add and remove child operations
 
+[0.7.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.7.0
 [0.6.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.6.0
 [0.5.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.5.0
 [0.4.0]: https://github.com/philiprehberger/rb-tree/releases/tag/v0.4.0

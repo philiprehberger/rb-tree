@@ -135,6 +135,19 @@ grandchild.ancestors.map(&:value)  # => ['child', 'root']
 child.siblings.map(&:value)        # => ['other_child']
 ```
 
+### Sibling Navigation
+
+```ruby
+a = root.add_child('a')
+b = root.add_child('b')
+c = root.add_child('c')
+
+b.next_sibling.value  # => 'c'
+b.prev_sibling.value  # => 'a'
+a.prev_sibling        # => nil (first child)
+c.next_sibling        # => nil (last child)
+```
+
 ### Leaf Collection
 
 ```ruby
@@ -194,6 +207,8 @@ root.prune(max_depth: 2).flatten
 | `#==` | Structural equality comparison |
 | `#ancestors` | Array of ancestors from parent to root |
 | `#siblings` | Sibling nodes excluding self |
+| `#next_sibling` | Next sibling in parent's child order, or nil |
+| `#prev_sibling` | Previous sibling in parent's child order, or nil |
 | `#map { \|value\| }` | New tree with transformed values |
 | `#flatten` | All values as flat array (DFS pre-order) |
 | `#each_with_depth` | Iterate yielding node and depth level |
